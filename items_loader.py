@@ -11,7 +11,6 @@ def _replace_config_values(config: Dict[str, Dict[str, Dict[str, Union[str, int]
         for weapon_name, characteristics in items_list.items():
             for key, value in characteristics.items():
                 if isinstance(value, str):
-                    characteristics[key] = value.replace("$k$", weapon_name)
                     characteristics[key] = re.sub(
                         r"([a-z])([A-Z])", r"\1 \2", weapon_name
                     )
