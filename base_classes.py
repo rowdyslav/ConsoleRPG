@@ -1,9 +1,23 @@
 from random import randint
-from typing import List
+from collections.abc import Callable
+from typing import List, Union, Dict
+
+
+class Item:
+    def __init__(self, name: str = "Неизвестный предмет", mana_cost: int = 0):
+        self.name = name
+        self.mana_cost = mana_cost
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f"{self.__class__.__bases__[0].__name__}Item{vars(self)}"
 
 
 class Player:
     def __init__(self, n):
+        self.game = None
         self.nick = n
         self.hp_max = randint(1, 100)
         self.mana_max = randint(1, self.hp_max)
@@ -17,13 +31,22 @@ class Player:
     def __repr__(self):
         return f"Player{vars(self)}"
 
-    def have_weapon(self):
+    def have_weapon(self) -> bool:
         return bool(self.weapon)
 
-    def have_consume(self):
+    def have_consume(self) -> bool:
         return bool(self.consume)
 
-    def attack(self, other_player):
+    def mana_enough(self, item: Item) -> bool:
+        return self.mana > item.mana_cost
+
+    def get_targets(self, conditions: List[Callable]) -> list:
+        return [
+            target for target in self.game.players
+            if all(cond(self, target) for cond in conditions)
+        ]
+
+    def attack(self, other_player) -> tuple[str, bool]:
         wp = self.weapon
 
         self.mana -= wp.mana_cost
@@ -39,7 +62,7 @@ class Player:
             f"он теряет {wp.mana_cost} маны! {other_player.nick} теряет {wp.damage} хп!"
         ), True
 
-    def use(self):
+    def use(self) -> tuple[str, bool]:
         cs = self.consume
 
         self.mana -= cs.mana_cost
@@ -57,87 +80,85 @@ class Player:
             True,
         )
 
-
-class Item:
-    def __init__(self, name: str = "Неизвестный предмет", mana_cost: int = 0):
-        self.name = name
-        self.mana_cost = mana_cost
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return f"{self.__class__.__bases__[0].__name__}Item{vars(self)}"
-
-    def mana_enough(self, player: Player):
-        return player.mana > self.mana_cost
-
-
-class Game:
-    def __init__(self, players: List[Player]):
-        self.players = players
-
-    def get_players_info(self):
-        return self.players
-
-    def enum_players(self, without=""):
-        return [
-            f"{x} ({y.nick})" for x, y in enumerate(self.players) if y.nick != without
-        ]
-
-    def make_move(self, player, move):
+    def make_move(self, move) -> tuple[str, bool]:
         match move[0].upper():
             case "A":
-                if not player.have_weapon():
+                if not self.have_weapon():
                     return "Нет оружия для атаки!", False
-                if not player.weapon.mana_enough(player):
-                    return f"Недостаточно маны для атаки {player.weapon.name}", False
+                if not self.mana_enough(self.weapon):
+                    return f"Недостаточно маны для атаки {self.weapon.name}", False
 
-                n = "\n"
-                target_index = int(
-                    input(
-                        f"Возможные цели атаки: {n.join(self.enum_players(without=player.nick))}\n-> "
-                    )
+                form = "{} ({})\n"
+                target_tip = (
+                        "Возможные цели атаки:\n" +
+                        "\n".join(
+                            [
+                                form.format(self.game.players.index(x), x.nick)
+                                for x in self.get_targets([lambda i, j: i.nick != j.nick])
+                            ]
+                        ) +
+                        "-> "
                 )
+                target_index = int(input(target_tip))
                 try:
-                    result = player.attack(self.players[target_index])
+                    result = self.attack(self.game.players[target_index])
                 except IndexError:
                     result = "Неправильная цель атаки", False
                 return result
             case "U":
-                if not player.have_consume():
+                if not self.have_consume():
                     return "Нету расходника для использования!", False
-
-                if not player.consume.mana_enough(player):
+                if not self.mana_enough(self.consume):
                     return (
-                        f"Недостаточно маны для использования {player.consume.name}",
+                        f"Недостаточно маны для использования {self.consume.name}",
                         False,
                     )
 
-                result = player.use()
+                result = self.use()
                 return result
+
             case "S":
-                hp_reg, mana_reg = player.hp_max / 10, player.mana_max / 10
+                hp_reg, mana_reg = self.hp_max // 10, self.mana_max // 10
                 return (
-                    f"Игрок {player.nick} решает отдохнуть, восстанавливает {hp_reg} хп и {mana_reg} маны",
+                    f"Игрок {self.nick} решает отдохнуть, восстанавливает {hp_reg} хп и {mana_reg} маны",
                     True,
                 )
+
             case "I":
                 message = (
-                    f"Ваш ник - {player.nick}\n"
-                    f"ХП - {player.hp} / {player.hp_max}\n"
-                    f"Мана {player.mana} / {player.mana_max}\n"
+                    f"Ваш ник - {self.nick}\n"
+                    f"ХП - {self.hp} / {self.hp_max}\n"
+                    f"Мана {self.mana} / {self.mana_max}\n"
                 )
 
                 message += (
-                    f"Оружие {player.weapon}\n" if player.weapon else "Оружия нет\n"
+                    f"Оружие {self.weapon}\n" if self.weapon else "Оружия нет\n"
                 )
                 message += (
-                    f"Расходник {player.consume} (еще {player.consume.count})\n"
-                    if player.consume
+                    f"Расходник {self.consume} (еще {self.consume.count})\n"
+                    if self.consume
                     else "Расходника нет\n"
                 )
 
                 return message, False
             case _:
                 return "Неправильный ход!", False
+
+
+class Game:
+    def __init__(self, players: List[Player], items: Dict[str, List[Union[Item, type]]]):
+        self.players = players
+        self.items_list = items
+
+    def start(self):
+        for player in self.players:
+            if not player.game:
+                player.game = self
+            else:
+                print(
+                    f'Игрок {self.players.index(player)} ({player.nick}) уже находится в другой сессии!\n'
+                    f'Удалите из этой с помощью Game.remove_player(индекс)'
+                )
+
+    def get_players_info(self):  # ##
+        return self.players

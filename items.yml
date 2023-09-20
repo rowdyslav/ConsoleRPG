@@ -1,0 +1,22 @@
+# $k$ (key) меняется на ключ мапа
+# $kws$ (key with space) меняется на ключ мапа, разделяя слова с большой буквы пробелами
+
+Weapon:
+  BattleFury:
+    name: $kws$
+    damage: 10
+    durab: 5
+    mana_cost: 1
+
+ActionWeapon:
+  EtherialBlade:
+    name: $kws$
+    damage: 33
+    durab: 3
+    mana_cost: 33
+
+Consume:
+  FairyFire:
+    name: $kws$
+    mana_cost: 0
+    hp_regen: 20
