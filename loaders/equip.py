@@ -3,8 +3,6 @@ import yaml
 from typing import Dict, Union, List
 from base_classes import Player, Item
 
-from item_types import Weapon, ActionWeapon, Consume
-
 
 def load_equip(
         filename: str, players: List[Player], items: Dict[str, list[Item]]
