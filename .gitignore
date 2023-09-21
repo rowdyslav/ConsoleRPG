@@ -1,3 +1,5 @@
 /.idea
-/__pycache__
-/items/__pycache__/
+/__pycache__/
+/.replit
+/poetry.lock
+/pyproject.toml
