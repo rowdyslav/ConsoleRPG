@@ -2,6 +2,8 @@ from random import randint
 from collections.abc import Callable
 from typing import List, Union, Dict
 
+# from typing import Tuple - Deprecated
+
 
 class Item:
     def __init__(self, name: str = "Неизвестный предмет", mana_cost: int = 0):
@@ -42,7 +44,8 @@ class Player:
 
     def get_targets(self, conditions: List[Callable]) -> list:
         return [
-            target for target in self.game.players
+            target
+            for target in self.game.players
             if all(cond(self, target) for cond in conditions)
         ]
 
@@ -90,14 +93,14 @@ class Player:
 
                 form = "{} ({})\n"
                 target_tip = (
-                        "Возможные цели атаки:\n" +
-                        "\n".join(
-                            [
-                                form.format(self.game.players.index(x), x.nick)
-                                for x in self.get_targets([lambda i, j: i.nick != j.nick])
-                            ]
-                        ) +
-                        "-> "
+                    "Возможные цели атаки:\n"
+                    + "\n".join(
+                        [
+                            form.format(self.game.players.index(x), x.nick)
+                            for x in self.get_targets([lambda i, j: i.nick != j.nick])
+                        ]
+                    )
+                    + "-> "
                 )
                 target_index = int(input(target_tip))
                 try:
@@ -131,9 +134,7 @@ class Player:
                     f"Мана {self.mana} / {self.mana_max}\n"
                 )
 
-                message += (
-                    f"Оружие {self.weapon}\n" if self.weapon else "Оружия нет\n"
-                )
+                message += f"Оружие {self.weapon}\n" if self.weapon else "Оружия нет\n"
                 message += (
                     f"Расходник {self.consume} (еще {self.consume.count})\n"
                     if self.consume
@@ -146,7 +147,9 @@ class Player:
 
 
 class Game:
-    def __init__(self, players: List[Player], items: Dict[str, List[Union[Item, type]]]):
+    def __init__(
+        self, players: List[Player], items: Dict[str, List[Union[Item, type]]]
+    ):
         self.players = players
         self.items_list = items
 
@@ -156,8 +159,8 @@ class Game:
                 player.game = self
             else:
                 print(
-                    f'Игрок {self.players.index(player)} ({player.nick}) уже находится в другой сессии!\n'
-                    f'Удалите из этой с помощью Game.remove_player(индекс)'
+                    f"Игрок {self.players.index(player)} ({player.nick}) уже находится в другой сессии!\n"
+                    f"Удалите из этой с помощью Game.remove_player(индекс)"
                 )
 
     def get_players_info(self):  # ##
