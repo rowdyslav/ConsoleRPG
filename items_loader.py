@@ -3,6 +3,7 @@ from typing import Dict, Union, List
 
 import yaml
 
+from base_classes import Item
 from item_types import ActionWeapon, Weapon, Consume
 
 
