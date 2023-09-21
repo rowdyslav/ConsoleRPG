@@ -3,7 +3,7 @@ from base_classes import Item
 
 class Weapon(Item):
     def __init__(
-        self, name: str = None, mana_cost: int = None, damage: int = 1, durab: int = 1
+            self, name: str = "Неизвестное оружие", mana_cost: int = 0, damage: int = 1, durab: int = 1
     ):
         super().__init__(name, mana_cost)
         self.damage = damage
@@ -17,12 +17,12 @@ class ActionWeapon(Weapon):
 
 class Consume(Item):
     def __init__(
-        self,
-        name: str = None,
-        mana_cost: int = None,
-        hp_regen: int = 0,
-        mana_regen: int = 0,
-        count: int = 1,
+            self,
+            name: str = "Неизвестный расходник",
+            mana_cost: int = 0,
+            hp_regen: int = 1,
+            mana_regen: int = 0,
+            count: int = 1,
     ):
         super().__init__(name, mana_cost)
         self.count = count

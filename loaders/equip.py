@@ -7,16 +7,18 @@ from item_types import Weapon, ActionWeapon, Consume
 
 
 def load_equip(
-    filename: str, players: List[Player], items: List[Item]
+        filename: str, players: List[Player], items: Dict[str, list[Item]]
 ) -> Dict[Player, Dict[str, Item]]:
     with open(filename, "r") as file:
         data = yaml.safe_load(file)
 
+        nick_or_ind: Union[str, int]
+        player_equip: Dict[str, str]
         for nick_or_ind, player_equip in data.items():
             if isinstance(nick_or_ind, str):
                 player = [x for x in players if x.nick == nick_or_ind][0]
             elif isinstance(nick_or_ind, int) and not isinstance(
-                data[nick_or_ind], Player
+                    data[nick_or_ind], Player
             ):
                 player = players[nick_or_ind]
             else:
@@ -27,8 +29,9 @@ def load_equip(
                 break
             data[nick_or_ind] = player
 
-            """Сдесь нужно сделать обработку дикта player_equip, который выглядит как {строка: строка}
-               из этого сделать -> {строка: Item}
-               где первая строка слот экипировки,
-               а вторая строка name объекта Item"""
+            for equip_slot, item_name in player_equip.items():
+                item = [y for x in items for y in items[x] if y.name == item_name][0]
+
+                data[nick_or_ind][player_equip][equip_slot] = item
+
         return data

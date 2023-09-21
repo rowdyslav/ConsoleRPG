@@ -1,3 +1,4 @@
+from pprint import pprint
 from random import randint, choice
 from collections.abc import Callable
 from typing import List, Dict
@@ -7,7 +8,7 @@ from typing import List, Dict
 
 
 class Item:
-    def __init__(self, name: str = "Неизвестный предмет", mana_cost: int = 0):
+    def __init__(self, name: str, mana_cost: int):
         self.name = name
         self.mana_cost = mana_cost
 
@@ -94,14 +95,14 @@ class Player:
 
                 form = "{} ({})\n"
                 target_tip = (
-                    "Возможные цели атаки:\n"
-                    + "\n".join(
-                        [
-                            form.format(self.game.players.index(x), x.nick)
-                            for x in self._get_targets([lambda i, j: i.nick != j.nick])
-                        ]
-                    )
-                    + "-> "
+                        "Возможные цели атаки:\n"
+                        + "\n".join(
+                    [
+                        form.format(self.game.players.index(x), x.nick)
+                        for x in self._get_targets([lambda i, j: i.nick != j.nick])
+                    ]
+                )
+                        + "-> "
                 )
                 target_index = int(input(target_tip))
                 try:
@@ -149,13 +150,13 @@ class Player:
 
 class Game:
     def __init__(
-        self,
-        players: List[Player],
-        items: Dict[str, List[Item]],
-        equip: Dict[Player, Dict[str, Item]] = None,
+            self,
+            players: List[Player],
+            items_dict: Dict[str, List[Item]],
+            equip: Dict[Player, Dict[str, Item]] = None,
     ):
         self.players = players
-        self.items_list = items
+        self.items_list = items_dict
         self.equip = equip
 
     def start(self):

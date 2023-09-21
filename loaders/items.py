@@ -2,7 +2,6 @@ import yaml
 import re
 
 from typing import Dict, Union, List
-from base_classes import Item
 
 from base_classes import Item
 from item_types import ActionWeapon, Weapon, Consume
@@ -27,19 +26,19 @@ def create_item_classes(filename) -> Dict[str, List[Item]]:
             for item_name, characteristics in items_list.items():
                 match custom_item_parent:
                     case "Weapon":
-                        custom_item_cls = type(item_name, (Weapon,), characteristics)
+                        custom_item_cls = type(item_name, (Weapon,), {})
                     case "ActionWeapon":
                         custom_item_cls = type(
                             item_name, (ActionWeapon,), characteristics
                         )
                     case "Consume":
-                        custom_item_cls = type(item_name, (Consume,), characteristics)
+                        custom_item_cls = type(item_name, (Consume,), {})
 
                 working_massive: List[type] = custom_item_classes.get(
                     custom_item_parent
                 )
                 if not working_massive:
                     custom_item_classes[custom_item_parent] = []
-                custom_item_classes[custom_item_parent].append(custom_item_cls)
+                custom_item_classes[custom_item_parent].append(custom_item_cls(**characteristics))
 
     return custom_item_classes

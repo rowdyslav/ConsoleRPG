@@ -35,7 +35,7 @@ def main():
             player = next(turns_order)
             print(f"Ход игрока {player.nick}")
     except KeyboardInterrupt:
-        print("Выход из игры..")
+        print("\nВыход из игры..")
 
 
 if __name__ == "__main__":
