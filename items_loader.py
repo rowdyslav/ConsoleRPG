@@ -3,6 +3,7 @@ from typing import Dict, Union, List
 
 import yaml
 
+from base_classes import Item
 from item_types import ActionWeapon, Weapon, Consume
 
 
@@ -17,7 +18,7 @@ def _replace_config_values(config: Dict[str, Dict[str, Dict[str, Union[str, int]
     return config
 
 
-def create_item_classes(filename) -> Dict[str, List[type]]:
+def create_item_classes(filename) -> Dict[str, List[Item]]:
     custom_item_classes = {}
     with open(filename, "r") as file:
         data = _replace_config_values(yaml.safe_load(file))
