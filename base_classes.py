@@ -1,6 +1,7 @@
-from random import randint
+from random import randint, choice
 from collections.abc import Callable
-from typing import List, Union, Dict
+from typing import List, Dict
+
 
 # from typing import Tuple - Deprecated
 
@@ -33,23 +34,23 @@ class Player:
     def __repr__(self):
         return f"Player{vars(self)}"
 
-    def have_weapon(self) -> bool:
+    def _have_weapon(self) -> bool:
         return bool(self.weapon)
 
-    def have_consume(self) -> bool:
+    def _have_consume(self) -> bool:
         return bool(self.consume)
 
-    def mana_enough(self, item: Item) -> bool:
+    def _mana_enough(self, item: Item) -> bool:
         return self.mana > item.mana_cost
 
-    def get_targets(self, conditions: List[Callable]) -> list:
+    def _get_targets(self, conditions: List[Callable]) -> list:
         return [
             target
             for target in self.game.players
             if all(cond(self, target) for cond in conditions)
         ]
 
-    def attack(self, other_player) -> tuple[str, bool]:
+    def _attack(self, other_player) -> tuple[str, bool]:
         wp = self.weapon
 
         self.mana -= wp.mana_cost
@@ -65,7 +66,7 @@ class Player:
             f"он теряет {wp.mana_cost} маны! {other_player.nick} теряет {wp.damage} хп!"
         ), True
 
-    def use(self) -> tuple[str, bool]:
+    def _use(self) -> tuple[str, bool]:
         cs = self.consume
 
         self.mana -= cs.mana_cost
@@ -86,9 +87,9 @@ class Player:
     def make_move(self, move: str) -> tuple[str, bool]:
         match move[0].upper():
             case "A":
-                if not self.have_weapon():
+                if not self._have_weapon():
                     return "Нет оружия для атаки!", False
-                if not self.mana_enough(self.weapon):
+                if not self._mana_enough(self.weapon):
                     return f"Недостаточно маны для атаки {self.weapon.name}", False
 
                 form = "{} ({})\n"
@@ -97,27 +98,27 @@ class Player:
                     + "\n".join(
                         [
                             form.format(self.game.players.index(x), x.nick)
-                            for x in self.get_targets([lambda i, j: i.nick != j.nick])
+                            for x in self._get_targets([lambda i, j: i.nick != j.nick])
                         ]
                     )
                     + "-> "
                 )
                 target_index = int(input(target_tip))
                 try:
-                    result = self.attack(self.game.players[target_index])
+                    result = self._attack(self.game.players[target_index])
                 except IndexError:
                     result = "Неправильная цель атаки", False
                 return result
             case "U":
-                if not self.have_consume():
+                if not self._have_consume():
                     return "Нету расходника для использования!", False
-                if not self.mana_enough(self.consume):
+                if not self._mana_enough(self.consume):
                     return (
                         f"Недостаточно маны для использования {self.consume.name}",
                         False,
                     )
 
-                result = self.use()
+                result = self._use()
                 return result
 
             case "S":
@@ -147,9 +148,15 @@ class Player:
 
 
 class Game:
-    def __init__(self, players: List[Player], items: Dict[str, List[Item]]):
+    def __init__(
+        self,
+        players: List[Player],
+        items: Dict[str, List[Item]],
+        equip: Dict[Player, Dict[str, Item]] = None,
+    ):
         self.players = players
         self.items_list = items
+        self.equip = equip
 
     def start(self):
         for player in self.players:
@@ -160,6 +167,16 @@ class Game:
                     f"Игрок {self.players.index(player)} ({player.nick}) уже находится в другой сессии!\n"
                     f"Удалите из этой с помощью Game.remove_player(индекс)"
                 )
+        if not self.equip:
+            for player in self.players:
+                player.weapon = choice(
+                    self.items_list["Weapon"] + self.items_list["ActionWeapon"]
+                )
+                player.consume = choice(self.items_list["Consume"])
+        else:
+            for player in self.players:
+                player.weapon = self.equip[player]["weapon"]
+                player.consume = self.equip[player]["consume"]
 
     def get_players_info(self):  # ##
         return self.players

@@ -1,9 +1,9 @@
-import re
-from typing import Dict, Union, List
-
 import yaml
+import re
 
+from typing import Dict, Union, List
 from base_classes import Item
+
 from item_types import ActionWeapon, Weapon, Consume
 
 

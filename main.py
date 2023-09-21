@@ -1,14 +1,16 @@
 from base_classes import Game, Player
 from itertools import cycle
 
-from items_loader import create_item_classes
+from loaders.equip import load_equip
+from loaders.items import create_item_classes
 
 
 def main():
     players = list(map(Player, input("Введите ники игроков через пробел -> ").split()))
-    items = create_item_classes("items.yml")
+    items = create_item_classes("settings/items.yml")
+    equip = load_equip("settings/equip.yml", players, items)
 
-    session = Game(players, items)
+    session = Game(players, items, equip)
     session.start()
 
     move_tip = (
