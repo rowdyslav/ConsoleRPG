@@ -11,7 +11,6 @@ def main():
     session = Game(players, items)
     session.start()
 
-    mm = Player.make_move
     move_tip = (
         "Варианты хода:\n"
         "A - атака\n"
@@ -21,17 +20,17 @@ def main():
         "-> "
     )
 
-    order = cycle(iter(players))
-    player = next(order)
+    turns_order = cycle(iter(players))
+    player = next(turns_order)
     print(f"Ход игрока {player.nick}")
     try:
         while True:
-            message, is_move_end = mm(player, input(move_tip))
+            message, is_move_end = player.make_move(input(move_tip))
             while not is_move_end:
                 print(message)
-                message, is_move_end = mm(player, input(move_tip))
+                message, is_move_end = player.make_move(input(move_tip))
             print(message)
-            player = next(order)
+            player = next(turns_order)
             print(f"Ход игрока {player.nick}")
     except KeyboardInterrupt:
         print("Выход из игры..")

@@ -18,9 +18,9 @@ class Item:
 
 
 class Player:
-    def __init__(self, n):
+    def __init__(self, nick: str):
         self.game = None
-        self.nick = n
+        self.nick = nick
         self.hp_max = randint(1, 100)
         self.mana_max = randint(1, self.hp_max)
         self.hp, self.mana = self.hp_max, self.mana_max
@@ -83,7 +83,7 @@ class Player:
             True,
         )
 
-    def make_move(self, move) -> tuple[str, bool]:
+    def make_move(self, move: str) -> tuple[str, bool]:
         match move[0].upper():
             case "A":
                 if not self.have_weapon():
@@ -147,9 +147,7 @@ class Player:
 
 
 class Game:
-    def __init__(
-        self, players: List[Player], items: Dict[str, List[Union[Item, type]]]
-    ):
+    def __init__(self, players: List[Player], items: Dict[str, List[Item]]):
         self.players = players
         self.items_list = items
 
