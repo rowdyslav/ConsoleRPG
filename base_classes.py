@@ -1,10 +1,10 @@
-from pprint import pprint
 from random import randint, choice
 from collections.abc import Callable
 from typing import List, Dict
 
 
-# from typing import Tuple - Deprecated
+# from typing import Callable, Tuple
+# # # # Deprecated # # # #
 
 
 class Item:

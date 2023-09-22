@@ -8,9 +8,9 @@ from loaders.items import create_item_classes
 def main():
     players = list(map(Player, input("Введите ники игроков через пробел -> ").split()))
     items = create_item_classes("settings/items.yml")
-    equip = load_equip("settings/equip.yml", players, items)
+    # equip = load_equip("settings/equip.yml", players, items)
 
-    session = Game(players, items, equip)
+    session = Game(players, items)
     session.start()
 
     move_tip = (
