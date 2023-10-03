@@ -5,18 +5,18 @@ from base_classes import Player, Item
 
 
 def load_equip(
-        filename: str, players: List[Player], items: Dict[str, list[Item]]
+    filename: str, players: List[Player], items: Dict[str, list[Item]]
 ) -> Dict[Player, Dict[str, Item]]:
     with open(filename, "r") as file:
         data = yaml.safe_load(file)
 
-        nick_or_ind: Union[str, int]
-        player_equip: Dict[str, str]
+        nick_or_ind: Union[str, int]  # !typing! #
+        player_equip: Dict[str, str]  # !typing! #
         for nick_or_ind, player_equip in data.items():
             if isinstance(nick_or_ind, str):
                 player = [x for x in players if x.nick == nick_or_ind][0]
             elif isinstance(nick_or_ind, int) and not isinstance(
-                    data[nick_or_ind], Player
+                data[nick_or_ind], Player
             ):
                 player = players[nick_or_ind]
             else:
