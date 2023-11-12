@@ -2,6 +2,8 @@ from random import randint, choice
 from collections.abc import Callable
 from typing import List, Dict
 
+from item_types import Consume, Weapon
+
 # from typing import Callable, Tuple  !Deprecated!
 
 
@@ -19,13 +21,13 @@ class Item:
 
 class Player:
     def __init__(self, nick: str):
-        self.game = None
+        self.game: Game = None
         self.nick = nick
         self.hp_max = randint(1, 100)
         self.mana_max = randint(1, self.hp_max)
         self.hp, self.mana = self.hp_max, self.mana_max
-        self.weapon = None
-        self.consume = None
+        self.weapon: Weapon = None
+        self.consume: Consume = None
 
     def __str__(self):
         return self.nick
