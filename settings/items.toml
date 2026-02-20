@@ -1,0 +1,16 @@
+[Weapon.BattleFury]
+name = "$kws$"
+damage = 10
+durability = 5
+
+[ActionWeapon.EtherialBlade]
+name = "$kws$"
+damage = 33
+durability = 3
+mana_cost = 33
+
+[Consume.FairyFire]
+name = "$kws$"
+hp_regen = 20
+mana_regen = 10
+count = 3
