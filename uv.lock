@@ -34,9 +34,10 @@ wheels = [
 
 [[package]]
 name = "consolerpg"
-version = "0.1.0"
-source = { virtual = "." }
+version = "0.4.0"
+source = { editable = "." }
 dependencies = [
+    { name = "rich" },
     { name = "typer" },
 ]
 
@@ -47,6 +48,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "rich", specifier = ">=14.3.3" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0" },
     { name = "typer", specifier = ">=0.20.1" },
 ]

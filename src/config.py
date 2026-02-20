@@ -15,7 +15,7 @@ def load_mapping(path: str | Path) -> dict[str, Any]:
     if not file_path.exists():
         raise ConfigError(f"Config file not found: {file_path}")
     if file_path.suffix.lower() != ".toml":
-        raise ConfigError(_ := "Only TOML configs are supported. Use .toml")
+        raise ConfigError("Only TOML configs are supported. Use .toml")
 
     with file_path.open("rb") as file:
         data = tomllib.load(file)
