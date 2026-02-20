@@ -1,10 +1,11 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 from random import Random
+from typing import TYPE_CHECKING
 
 from .errors import GameplayError
-from .models import ActionWeapon, Consume, Item, Player, Weapon
+
+if TYPE_CHECKING:
+    from .models import ActionWeapon, Consume, Item, Player, Weapon
 
 
 @dataclass(slots=True)
@@ -23,11 +24,14 @@ class GameSession:
         rng: Random | None = None,
     ) -> None:
         if len(players) < 2:
-            raise GameplayError("A session requires at least two players")
+            msg = "A session requires at least two players"
+            raise GameplayError(msg)
         if not weapons and not action_weapons:
-            raise GameplayError("At least one weapon is required")
+            msg = "At least one weapon is required"
+            raise GameplayError(msg)
         if not consumables:
-            raise GameplayError("At least one consumable is required")
+            msg = "At least one consumable is required"
+            raise GameplayError(msg)
 
         self.players = players
         self.weapons = weapons

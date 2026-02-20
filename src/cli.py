@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from itertools import cycle
 from pathlib import Path
 from typing import Annotated
@@ -12,7 +10,7 @@ from .errors import ConfigError, GameplayError
 from .models import Player
 from .registry import create_item_registry
 
-app = typer.Typer(help="Console RPG powered by TOML configs")
+APP = typer.Typer(help="Console RPG powered by TOML configs")
 
 
 MOVE_TIP = (
@@ -36,10 +34,10 @@ def _ask_target_index(targets_count: int) -> int | None:
     return target_index
 
 
-@app.command()
+@APP.command()
 def play(
     items: Annotated[Path, typer.Option(help="Path to items .toml")] = Path(
-        "settings/items.toml"
+        "settings/items.toml",
     ),
     equip: Annotated[Path | None, typer.Option(help="Path to equipment .toml")] = None,
 ) -> None:
@@ -47,7 +45,7 @@ def play(
     try:
         nicknames = typer.prompt("Введите ники игроков через пробел").split()
         if len(nicknames) < 2:
-            raise GameplayError("Нужно минимум 2 игрока")
+            raise GameplayError(_ := "Нужно минимум 2 игрока")
 
         players = [Player.random(nick) for nick in nicknames]
         registry = create_item_registry(str(items))
@@ -86,7 +84,3 @@ def play(
     except (ConfigError, GameplayError, ValueError) as exc:
         typer.echo(f"Ошибка: {exc}", err=True)
         raise typer.Exit(code=1) from exc
-
-
-if __name__ == "__main__":
-    app()

@@ -1,9 +1,11 @@
-from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from .config import load_mapping
 from .errors import ConfigError
 from .models import ActionWeapon, Consume, Item, Player, Weapon
-from .registry import ItemRegistry
+
+if TYPE_CHECKING:
+    from .registry import ItemRegistry
 
 
 def _resolve_player(key: str, players: list[Player]) -> Player:
@@ -30,9 +32,11 @@ def load_equipment(
 
     for key, slots in data.items():
         if not isinstance(key, str):
-            raise ConfigError("Equipment key must be TOML table name (string)")
+            msg = "Equipment key must be TOML table name (string)"
+            raise ConfigError(msg)
         if not isinstance(slots, dict):
-            raise ConfigError("Equipment entry must be a mapping")
+            msg = "Equipment entry must be a mapping"
+            raise ConfigError(msg)
 
         player = _resolve_player(key, players)
         player_slots: dict[str, Item] = {}
@@ -41,7 +45,8 @@ def load_equipment(
             if slot not in {"weapon", "consume"}:
                 raise ConfigError(f"Unknown equipment slot: {slot}")
             if not isinstance(item_name, str):
-                raise ConfigError("Equipment item name must be string")
+                msg = "Equipment item name must be string"
+                raise ConfigError(msg)
 
             item = registry.find_item_by_name(item_name)
             if slot == "weapon" and not isinstance(item, (Weapon, ActionWeapon)):

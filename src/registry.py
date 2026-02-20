@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 from .config import load_mapping, resolve_name
@@ -43,11 +41,13 @@ def create_item_registry(path: str) -> ItemRegistry:
 
     for group_name, group_items in data.items():
         if not isinstance(group_name, str) or not isinstance(group_items, dict):
-            raise ConfigError("Each top-level entry must be a named item group")
+            msg = "Each top-level entry must be a named item group"
+            raise ConfigError(msg)
 
         for key_name, raw_item in group_items.items():
             if not isinstance(key_name, str) or not isinstance(raw_item, dict):
-                raise ConfigError("Each item entry must be an object")
+                msg = "Each item entry must be an object"
+                raise ConfigError(msg)
 
             item_name = resolve_name(_as_str(raw_item, "name", "$kws$"), key_name)
             mana_cost = _as_int(raw_item, "mana_cost", 0)

@@ -1,5 +1,21 @@
-line-length = 100
-target-version = "py311"
+target-version = "py314"
 
 [lint]
-select = ["E", "F", "I", "UP", "B"]
+ignore = [
+"BLE001",
+"COM812",
+"D",
+"E731",
+"EM102",
+"ERA001",
+"F811",
+"INP001",
+"PLC0415",
+"PLR2004",
+"RUF",
+"S105",
+"S311",
+"TRY003",
+]
+select = ["ALL"]
+fixable = ["ALL"]
